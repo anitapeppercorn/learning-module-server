@@ -1,2 +1,3 @@
 # learning-module-server
-server side code
+server side code - simple tests
+
