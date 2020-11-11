@@ -2,24 +2,31 @@
 const bcrypt = require('bcrypt');
 const faker = require('faker');
 const db = require('../config/connection');
-const { Module, 
-    User, 
-    Category, 
-    Completed, 
-    Image, 
-    Lesson, 
-    Paragraph, 
-    Section, 
-    Video } = require('../models');
+const { 
+  User, 
+  Category, 
+  Module,
+  Section, 
+  Lesson,
+  Paragraph,
+  Image,
+  Video
+} = require('../models');
 
 db.once('open', async () => {
-  await Module.deleteMany({});
   await User.deleteMany({});
   await Category.deleteMany({});
+  await Module.deleteMany({});
+  await Section.deleteMany({}); 
+  await Lesson.deleteMany({});
+  await Paragraph.deleteMany({});
+  await Image.deleteMany({});
+  await Video.deleteMany({});
+
 
   // create user data
   const userData = [];
-  for (let i = 1; i < 51; i++) {
+  for (let i = 1; i < 4; i++) {
     const username = `user${i}`;
     const email = `${username}@gmail.com`;
     const password = await bcrypt.hash("password", 10)  // saltRounds = 10 in User.js
