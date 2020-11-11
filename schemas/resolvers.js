@@ -1,144 +1,100 @@
-const { AuthenticationError } = require('apollo-server-express');
-const { User, Module, Category, Image, Lesson, Paragraph, Progress, Section, Video } = require('../models');
+const { AuthenticationErro } = require('apollo-server-express');
+const { User, Category, Image, Lesson, Module, Paragraph, Section, Video} = require('../models');
 const { signToken } = require('../utils/auth');
+
 
 const resolvers = {
   Query: {
     categories: async () => {
       return await Category.find();
     },
-    modules: async (parent, { category, name }) => {
+    modules: async (parent, { moduleCategory, moduleTitle, moduleSection, moduleVideo }) => {
       const params = {};
 
-      if (category) {
-        params.category = category;
+      if (moduleCategory) {
+        params.moduleCategory = moduleCategory;
       }
 
-      if (name) {
-        params.name = {
-          $regex: name
+      if (moduleSection) {
+        params.moduleSection = moduleSection;
+      }
+
+      if (moduleVideo) {
+        params.moduleVideo = moduleVideo;
+      }
+
+      if(moduleTitle) {
+        params.moduleTitle = {
+          $regex: moduleTitle
         };
       }
 
-      return await Module.find(params).populate('category');
+      return await Module.find(params)
+      .populate('moduleCategory')
+      .populate('moduleSection')
+      .populate('moduleVideo')
+      ;
     },
     module: async (parent, { _id }) => {
-      return await Module.findById(_id).populate('category');
+      return await Module.findById(_id)
+      .populate('moduleCategory')
+      .populate('moduleSection')
+      .populate('moduleVideo');
+    },
+    sections: async (parent, { sectionLesson, sectionTitle, }) => {
+      const params = {};
+
+  
+      if (sectionLesson) {
+        params.sectionLesson = sectionLesson;
+      }
+
+      if(sectionTitle) {
+        params.sectionTitle = {
+          $regex: sectionTitle
+        };
+      }
+
+      return await Section.find(params)
+      .populate('sectionLesson')
+      ;
+    },
+    section: async (parent, { _id }) => {
+      return await Section.findById(_id).populate('sectionLesson');
+    },
+    paragraphs: async (parent, { paragraphRef, paragraphVideo }) => {
+      const params = {};
+
+      if(paragraphRef) {
+        params.paragraphRef = {
+          $regex: paragraphRef
+        };
+      }
+
+      if (paragraphVideo) {
+        params.paragraphVideo = paragraphVideo
+      }
+
+      return await Paragraph.find(params)
+      .populate('paragraphVideo')
     },
     user: async (parent, args, context) => {
       if (context.user) {
-        const user = await User.findById(context.user._id).populate({
-          path: 'completedModules.modules',
-          populate: 'category'
+        const user = await User.findById(context.user._id)
+        .populate({
+          path: 'friends',
+          populate: 'moduleSection',
+          populate: 'friends'
+        })
+        .populate({
+          path: 'completedModules',
+          populate: 'moduleSection'
         });
-
-        user.completedModules.sort((a, b) => b.purchaseDate - a.purchaseDate);
 
         return user;
       }
-
-      throw new AuthenticationError('Not logged in');
     },
-    completed: async (parent, { _id }, context) => {
-      if (context.user) {
-        const user = await User.findById(context.user._id).populate({
-          path: 'completedModules.modules',
-          populate: 'category'
-        });
-
-        return user.completedModules.id(_id);
-      }
-
-      throw new AuthenticationError('Not logged in');
-    },
-    checkout: async (parent, args, context) => {
-      const url = new URL(context.headers.referer).origin;
-      const completed = new Order({ modules: args.modules });
-      const { modules } = await completed.populate('modules').execPopulate();
-
-      const line_items = [];
-
-      for (let i = 0; i <modules.length; i++) {
-        // generate module id
-        const module = await stripe.modules.create({
-          name: modules[i].name,
-          description: modules[i].description,
-          images: [`${url}/images/${modules[i].image}`]
-        });
-
-        // generate price id using the module id
-        const price = await stripe.prices.create({
-          module: module.id,
-          unit_amount: modules[i].price * 100,
-          currency: 'usd'
-        });
-
-        // add prive id to the line items array
-        line_items.push({
-          price: price.id,
-          quantity: 1
-        });
-      };
-
-      const session = await stripe.checkout.sessions.create({
-        payment_method_types: ['card'],
-        line_items,
-        mode: 'payment',
-        success_url: `${url}/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${url}/`
-      });
-    return { session: session.id };
-    }
-  },
-  Mutation: {
-    addUser: async (parent, args) => {
-      const user = await User.create(args);
-      const token = signToken(user);
-
-      return { token, user };
-    },
-    addOrder: async (parent, { modules }, context) => {
-      console.log(context);
-      if (context.user) {
-        const completed = new Order({ modules });
-
-        await User.findByIdAndUpdate(context.user._id, { $push: { completedModules: completed } });
-
-        return completed;
-      }
-
-      throw new AuthenticationError('Not logged in');
-    },
-    updateUser: async (parent, args, context) => {
-      if (context.user) {
-        return await User.findByIdAndUpdate(context.user._id, args, { new: true });
-      }
-
-      throw new AuthenticationError('Not logged in');
-    },
-    updateModule: async (parent, { _id, quantity }) => {
-      const decrement = Math.abs(quantity) * -1;
-
-      return await Module.findByIdAndUpdate(_id, { $inc: { quantity: decrement } }, { new: true });
-    },
-    login: async (parent, { email, password }) => {
-      const user = await User.findOne({ email });
-
-      if (!user) {
-        throw new AuthenticationError('Incorrect credentials');
-      }
-
-      const correctPw = await user.isCorrectPassword(password);
-
-      if (!correctPw) {
-        throw new AuthenticationError('Incorrect credentials');
-      }
-
-      const token = signToken(user);
-
-      return { token, user };
-    }
   }
-};
+}
 
 module.exports = resolvers;

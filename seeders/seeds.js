@@ -33,6 +33,32 @@ db.once('open', async () => {
     userData.push({ username, email, password });
   }
   const createdUsers = await User.collection.insertMany(userData);
+
+  // create Video
+  const videoData = [];
+  for(let i = 0; i < 24; i +=1 ) {
+    const videoNumber = `${i}`;
+    const videoTitle = faker.commerce.productName();
+    const videoOverview = faker.lorem.words(Math.round(Math.random() * 20) + 1);
+    const videoReleaseDate = faker.date.past();
+    //store the video
+    videoData.push({ videoNumber, videoTitle, videoOverview, videoReleaseDate });
+  }
+  const createdVideos = await Video.collection.insertMany(videoData);
+ // console.log(createdVideos.insertedIds[''])
+
+   // create section data
+   const sectionData = [];
+   for (let i = 0; i < 120; i += 1) {
+     const sectionNumber = `${i}`;
+     const sectionTitle = faker.commerce.productName();
+     const sectionOverview = faker.lorem.words(Math.round(Math.random() * 20) + 1);
+     const sectionReleaseDate = faker.date.past();
+ 
+     sectionData.push({ sectionNumber, sectionTitle, sectionOverview, sectionReleaseDate });
+ 
+   };
+   const createdSections = await Section.collection.insertMany(sectionData);
   
   // create modules data
   const moduleData = [];
@@ -43,31 +69,36 @@ db.once('open', async () => {
     const moduleReleaseDate = faker.date.past();
     const modulePoster = faker.image.imageUrl();
     const moduleCategory = `Category${(Math.round(i * 0.2) + 1)}`;
-    const moduleVideo = faker.image.imageUrl();
+    const moduleVideo = await createdVideos.insertedIds[`${i}`];
+    const moduleSection = await createdSections.insertedIds[:10];
+    console.log(moduleVideo);
     // store the modules
-    moduleData.push({ moduleNumber, moduleTitle, moduleOverview, moduleReleaseDate, modulePoster, moduleCategory, moduleVideo });
+    moduleData.push({ moduleNumber, moduleTitle, moduleOverview, moduleReleaseDate, modulePoster, moduleCategory, moduleVideo, moduleSection });
   }
   const createdModules = await Module.collection.insertMany(moduleData);
 
+ 
+  
   // create section data
-  const sectionData = [];
+  const lessonData = [];
   for (let i = 0; i < 120; i += 1) {
-    const sectionNumber = `${i}`;
-    const sectionTitle = faker.commerce.productName();
-    const sectionOverview = faker.lorem.words(Math.round(Math.random() * 20) + 1);
-    // store the section
-    sectionData.push({ sectionNumber, sectionTitle, sectionOverview });
-     //assign section to a module
-    const randomModuleIndex = Math.floor(Math.random() * createdModules.ops.length);
-    const { moduleNumber, _id: moduleId } = createdModules.ops[randomModuleIndex];
-    const updatedModule = await Module.updateOne(
-    { _id: moduleId },
-    { $push: { moduleSection: sectionData._id } }
-  );
+    const lessonNumber = `${i}`;
+    const lessonTitle = faker.commerce.productName();
+    const lessonOverview = faker.lorem.words(Math.round(Math.random() * 20) + 1);
+    const lessonReleaseDate = faker.date.past();
+    // store the lesson
+    lessonData.push({ lessonNumber, lessonTitle, lessonOverview, lessonReleaseDate });
+      //assign lesson to a section
+    const randomSectionIndex = Math.floor(Math.random() * createdSections.ops.length);
+    const { sectionNumber, _id: sectionId } = createdSections.ops[randomSectionIndex];
+    const updatedSection = await Section.updateOne(
+    { _id: sectionId },
+    { $push: { sectionLesson: lessonData._id } }
+  )
   }
-  const createdSections = await Section.collection.insertMany(sectionData);
+  const createdLessons = await Section.collection.insertMany(lessonData);
 
-
+  // created linked moduleVideos
 
   console.log('all done!');
   process.exit(0);

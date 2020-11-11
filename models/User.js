@@ -2,10 +2,9 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 const bcrypt = require('bcrypt');
-const Progress = require('./Progress');
 
 const userSchema = new Schema({
-  username: {
+  userName: {
     type: String,
     required: true,
     trim: true

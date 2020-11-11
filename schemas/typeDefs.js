@@ -11,15 +11,6 @@ const typeDefs = gql`
     imageReleaseDate: String
   }
 
-  type Lesson {
-    _id: ID
-    lessonNumber: String
-    lessonTitle: String
-    lessonOverview: String
-    lessonReleaseDate: String
-    lessonParagraph: [Paragraph]
-  }
-
   type Paragraph {
     _id: ID
     paragraphRef: String
@@ -28,6 +19,15 @@ const typeDefs = gql`
     paragraphPoster: [String]
     paragraphVideo: [Video]
     paragraphReleaseDate: String
+  }
+
+  type Lesson {
+    _id: ID
+    lessonNumber: String
+    lessonTitle: String
+    lessonOverview: String
+    lessonReleaseDate: String
+    lessonParagraph: [Paragraph]
   }
 
   type Section {
@@ -46,12 +46,13 @@ const typeDefs = gql`
     moduleOverview: String
     moduleReleaseDate: String
     modulePoster: [String]
-    moduleCategory: String
+    moduleCategory: Category
     moduleVideo: [Video]
     moduleSection: [Section]
   }
 
   type Video {
+    _id: ID
     videoNumber: Int
     videoTitle: String
     videoContent: String
@@ -61,21 +62,15 @@ const typeDefs = gql`
 
   type User {
     _id: ID!
-    username: String
+    userName: String
     email: String
     friends: [User]
-    completedModules: [Progress]
+    completedModules: [Module]
   }
 
   type Category {
     _id: ID
     name: String
-  }
-
-  type Progress {
-    _id: ID!
-    finishDate: String
-    modules: [Module]
   }
 
   type Auth {
@@ -84,21 +79,21 @@ const typeDefs = gql`
   }
 
   type Query {
-    completed(_id: ID!): Progress
-    modules: [Module]
-    module(_id: ID!): Module
     categories: [Category]
-    lessons(section: ID): [Lesson]
-    sections: [Section]
-    paragraphs: [Paragraph]
-
+    modules(moduleCategory: ID, moduleTitle: String, moduleSection: ID, moduleVideo: ID): [Module]
+    module(_id: ID!): Module
+    sections(sectionTitle: String, lessonTitle: ID, ): [Section]
+    section(_id: ID!): Section
+    lessons(lessonTitle: String, lessonParagraph: ID): [Lesson]
+    lesson(_id: ID!): Lesson
+    paragraphs(paragraphRef: String, paragraphVideo: ID): [Paragraph]
     user: User
   }
 
   type Mutation {
-    addUser(username: String!, email: String!, password: String!): Auth
-    addCompleted(modules: [ID]!): Progress
-    updateUser(username: String, email: String, password: String): User
+    addUser(userName:String!, email: String!, password: String!): Auth
+    updateUser(userName: String, email: String, password: String): User
+    updateModule(_id: ID!, completedModules: String!): Module
     login(email: String!, password: String!): Auth
   }
 

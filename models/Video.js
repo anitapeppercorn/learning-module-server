@@ -5,7 +5,8 @@ const { Schema } = mongoose;
 const videoSchema = new Schema({
     videoNumber: {
         type: Number,
-        trim: true
+        required: true,
+        unique: true
     },
     videoTitle: {
         type: String,
