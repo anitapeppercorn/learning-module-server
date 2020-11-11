@@ -25,8 +25,22 @@ const userSchema = new Schema({
       type: Schema.Types.ObjectId,
       ref: 'User'
   }],
-  completedModules: [Progress.schema]
-});
+  completedModules: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Module',
+    validate: (arr) => {
+        return arr.filter(v => v === null).length === 0; 
+    }
+  }],
+
+},
+    // set this to use virtual below
+    {
+      toJSON: {
+          virtuals: true,
+      },
+  }
+  );
 
 // set up pre-save middleware to create password
 userSchema.pre('save', async function(next) {
