@@ -69,9 +69,8 @@ db.once('open', async () => {
     const moduleReleaseDate = faker.date.past();
     const modulePoster = faker.image.imageUrl();
     const moduleCategory = `Category${(Math.round(i * 0.2) + 1)}`;
-    const moduleVideo = await createdVideos.insertedIds[`${i}`];
-    const moduleSection = await createdSections.insertedIds[:10];
-    console.log(moduleVideo);
+    const moduleVideo = await createdVideos.insertedIds[`${i}`]; // ANITA - this works, but will need updating when we have mutliple Videos
+    const moduleSection = await createdSections.insertedIds[`${i}`]; // ANITA This needs updating for mutliple Sections
     // store the modules
     moduleData.push({ moduleNumber, moduleTitle, moduleOverview, moduleReleaseDate, modulePoster, moduleCategory, moduleVideo, moduleSection });
   }
