@@ -33,63 +33,41 @@ db.once('open', async () => {
     userData.push({ username, email, password });
   }
   const createdUsers = await User.collection.insertMany(userData);
-
+  
   // create modules data
   const moduleData = [];
   for (let i = 0; i < 24; i += 1) {
-    const moduleNumber = faker.random.uuid();
-    const moduleTitle = faker.commerce.title();
+    const moduleNumber = `${i}`;
+    const moduleTitle = faker.commerce.productName();
     const moduleOverview = faker.lorem.words(Math.round(Math.random() * 20) + 1);
     const moduleReleaseDate = faker.date.past();
     const modulePoster = faker.image.imageUrl();
-    const moduleCategory = faker.commerce.department();
-    const trailer = faker.image.imageUrl();
-    // store the movies
-    moduleData.push({ moduleNumber, moduleTitle, moduleOverview, moduleReleaseDate, modulePoster, moduleCategory,  });
+    const moduleCategory = `Category${(Math.round(i * 0.2) + 1)}`;
+    const moduleVideo = faker.image.imageUrl();
+    // store the modules
+    moduleData.push({ moduleNumber, moduleTitle, moduleOverview, moduleReleaseDate, modulePoster, moduleCategory, moduleVideo });
   }
-  const createdMovies = await Movie.collection.insertMany(movieData);
+  const createdModules = await Module.collection.insertMany(moduleData);
 
-  // create friends
-  for (let i = 0; i < 100; i += 1) {
-    const randomUserIndex = Math.floor(Math.random() * createdUsers.ops.length);
-    const { _id: userId } = createdUsers.ops[randomUserIndex];
-    let friendId = userId;
-    while (friendId === userId) {
-      const randomUserIndex = Math.floor(Math.random() * createdUsers.ops.length);
-      friendId = createdUsers.ops[randomUserIndex];
-    }
-    // add the friend to User.friends
-    await User.updateOne({ _id: userId }, { $addToSet: { friends: friendId } });
+  // create section data
+  const sectionData = [];
+  for (let i = 0; i < 120; i += 1) {
+    const sectionNumber = `${i}`;
+    const sectionTitle = faker.commerce.productName();
+    const sectionOverview = faker.lorem.words(Math.round(Math.random() * 20) + 1);
+    // store the section
+    sectionData.push({ sectionNumber, sectionTitle, sectionOverview });
+     //assign section to a module
+    const randomModuleIndex = Math.floor(Math.random() * createdModules.ops.length);
+    const { moduleNumber, _id: moduleId } = createdModules.ops[randomModuleIndex];
+    const updatedModule = await Module.updateOne(
+    { _id: moduleId },
+    { $push: { moduleSection: sectionData._id } }
+  );
   }
-  // create likedMovies
-  for (let i = 0; i < 100; i += 1) {
-    const randomUserIndex = Math.floor(Math.random() * createdUsers.ops.length);
-    const { _id: userId } = createdUsers.ops[randomUserIndex];
-    let movieId;
-    for (let i =0; i < (Math.floor(Math.random() * 10)); i += 1) {
-      const randomMovieIndex = Math.floor(Math.random() * createdMovies.ops.length);
-      movieId = createdMovies.ops[randomMovieIndex];
-    }
-    // add the movie to User.likedMovies
-    await User.updateOne({ _id: userId }, { $addToSet: { likedMovies: movieId } });
-    // add the user to Movie.likedUsers
-    await Movie.updateOne({ _id: movieId }, { $addToSet: { likedUsers: userId } });
-  }
+  const createdSections = await Section.collection.insertMany(sectionData);
 
-  // create dislikedMovies
-  for (let i = 0; i < 100; i += 1) {
-    const randomUserIndex = Math.floor(Math.random() * createdUsers.ops.length);
-    const { _id: userId } = createdUsers.ops[randomUserIndex];
-    let movieId;
-    for (let i =0; i < (Math.floor(Math.random() * 10)); i += 1) {
-      const randomMovieIndex = Math.floor(Math.random() * createdMovies.ops.length);
-      movieId = createdMovies.ops[randomMovieIndex];
-    }
-    // add the movie to User.dislikedMovies
-    await User.updateOne({ _id: userId }, { $addToSet: { dislikedMovies: movieId } });
-    // add the user to Movie.dislikedUsers
-    await Movie.updateOne({ _id: movieId }, { $addToSet: { dislikedUsers: userId } });
-  }
+
 
   console.log('all done!');
   process.exit(0);
