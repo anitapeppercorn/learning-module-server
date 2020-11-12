@@ -13,7 +13,6 @@ const typeDefs = gql`
 
   type Paragraph {
     _id: ID
-    paragraphRef: String
     paragraphNumber: Int
     paragraphContent: String
     paragraphPoster: [String]
@@ -37,6 +36,7 @@ const typeDefs = gql`
     lessonOverview: String
     lessonReleaseDate: String
     lessonSection: [Section]
+    lessonTime: String
   }
 
   type Module {
@@ -86,7 +86,7 @@ const typeDefs = gql`
     lesson(_id: ID!): Lesson
     sections(sectionTitle: String, sectionParagraph: ID): [Section]
     section(_id: ID!): Section
-    paragraphs(paragraphRef: String, paragraphVideo: ID): [Paragraph]
+    paragraphs( paragraphVideo: ID): [Paragraph]
     user: User
   }
 

@@ -8,15 +8,15 @@ const resolvers = {
     categories: async () => {
       return await Category.find();
     },
-    modules: async (parent, { moduleCategory, moduleTitle, moduleLesso, moduleVideo }) => {
+    modules: async (parent, { moduleCategory, moduleTitle, moduleLesson, moduleVideo }) => {
       const params = {};
 
       if (moduleCategory) {
         params.moduleCategory = moduleCategory;
       }
 
-      if (moduleLesso) {
-        params.moduleLesso = moduleLesso;
+      if (moduleLesson) {
+        params.moduleLesson = moduleLesson;
       }
 
       if (moduleVideo) {
@@ -31,36 +31,36 @@ const resolvers = {
 
       return await Module.find(params)
       .populate('moduleCategory')
-      .populate('moduleLesso')
+      .populate('moduleLesson')
       .populate('moduleVideo')
       ;
     },
     module: async (parent, { _id }) => {
       return await Module.findById(_id)
       .populate('moduleCategory')
-      .populate('moduleLesso')
+      .populate('moduleLesson')
       .populate('moduleVideo');
     },
-    lessons: async (parent, { sectionLesson, sectionTitle, }) => {
+    lessons: async (parent, { lessonSection, lessonTitle, }) => {
       const params = {};
 
   
-      if (sectionLesson) {
-        params.sectionLesson = sectionLesson;
+      if (lessonSection) {
+        params.lessonSection = lessonSection;
       }
 
-      if(sectionTitle) {
-        params.sectionTitle = {
-          $regex: sectionTitle
+      if(lessonTitle) {
+        params.lessonTitle = {
+          $regex: lessonTitle
         };
       }
 
       return await Section.find(params)
-      .populate('sectionLesson')
+      .populate('lessonSection')
       ;
     },
-    section: async (parent, { _id }) => {
-      return await Section.findById(_id).populate('sectionLesson');
+    lesson: async (parent, { _id }) => {
+      return await Section.findById(_id).populate('lessonSection');
     },
     paragraphs: async (parent, { paragraphRef, paragraphVideo }) => {
       const params = {};
@@ -83,12 +83,12 @@ const resolvers = {
         const user = await User.findById(context.user._id)
         .populate({
           path: 'friends',
-          populate: 'moduleLesso',
+          populate: 'moduleLesson',
           populate: 'friends'
         })
         .populate({
           path: 'completedModules',
-          populate: 'moduleLesso'
+          populate: 'moduleLesson'
         });
 
         return user;

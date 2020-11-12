@@ -136,6 +136,19 @@ db.once('open', async () => {
       // add the section to Lesson.lessonSection
       await Lesson.updateOne({ _id: lessonId }, { $addToSet: { lessonSection: sectionId } });
     }
+
+    // Add Lession ObjectID to Modules
+    for (let i = 0; i < 100; i += 1) {
+      const randomModuleIndex = Math.floor(Math.random() * createdModules.ops.length);
+      const { _id: moduleId } = createdModules.ops[randomModuleIndex];// get module ID
+      let lessonId;
+      for (let i =0; i < (Math.floor(Math.random() * 10)); i += 1) {
+        const randomSectionIndex = Math.floor(Math.random() * createdLessons.ops.length);
+        lessonId = createdLessons.ops[randomSectionIndex];// get Section ID
+      }
+      // add the lesson to Module.moduleSection
+      await Module.updateOne({ _id: moduleId }, { $addToSet: { moduleLesson: lessonId } });
+    }
     
     ////////////// End creating faker data
   console.log('all done!');
