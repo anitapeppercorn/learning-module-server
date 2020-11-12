@@ -13,7 +13,8 @@ const typeDefs = gql`
 
   type Paragraph {
     _id: ID
-    paragraphNumber: Int
+    paragraphRef: Number
+    paragraphNumber: Number
     paragraphContent: String
     paragraphPoster: [String]
     paragraphVideo: [Video]
@@ -22,7 +23,7 @@ const typeDefs = gql`
 
   type Section {
     _id: ID
-    sectionNumber: String
+    sectionNumber: Number
     sectionTitle: String
     sectionOverview: String
     sectionReleaseDate: String

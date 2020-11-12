@@ -3,10 +3,14 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const paragraphSchema = new Schema({
-  paragraphNumber: {
-      type: Number,
-      trim: true
-    },
+    paragraphRef: {
+        type: Number,
+        trim: true
+        },
+    paragraphNumber: {
+        type: Number,
+        trim: true
+        },
     paragraphContent: {
         type: String,
         trim: true,

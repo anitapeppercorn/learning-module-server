@@ -76,19 +76,25 @@ db.once('open', async () => {
    //seed the section object array
    const createdSections = await Section.collection.insertMany(sectionData);
 
+    function getRandomInt(max) {
+      return Math.floor(Math.random() * Math.floor(max));
+    };
+
     // create Paragraph
     const paragraphData = [];
-    for(let i = 0; i < 24; i +=1 ) {
+    for(let i = 0; i < 75; i +=1 ) {
+      const paragraphRef = `${i}`;
       const paragraphNumber = `${i}`;
       const paragraphContent = faker.lorem.words(Math.round(Math.random() * 100) + 1);
       const paragraphReleaseDate = faker.date.past();
       //const paragraphImage = x;//randomly assigned image ID. can be array of 0, 1 or 2
       //const paragraphVideo = x;//randomly assigned video ID
       //store the paragraph object
-      paragraphData.push({ paragraphNumber, paragraphContent, paragraphReleaseDate });
+      paragraphData.push({ paragraphRef, paragraphNumber, paragraphContent, paragraphReleaseDate });
     }
     //seed the paragraph object array
     const createdParagraphs = await Paragraph.collection.insertMany(paragraphData);
+    console.log();
 
     // create Image
     const imageData = [];
@@ -137,7 +143,7 @@ db.once('open', async () => {
       await Lesson.updateOne({ _id: lessonId }, { $addToSet: { lessonSection: sectionId } });
     }
 
-    // Add Lesson ObjectID to Modules
+    // Add Lessons to Modules
     for (let i = 0; i < 100; i += 1) {
       const randomModuleIndex = Math.floor(Math.random() * createdModules.ops.length);
       const { _id: moduleId } = createdModules.ops[randomModuleIndex];// get module ID
@@ -152,21 +158,18 @@ db.once('open', async () => {
 
     for (let i = 0; i < 100; i += 1) {
       const randomSectionIndex = Math.floor(Math.random() * createdSections.ops.length);
-      const { _id: moduleId } = createdSections.ops[randomSectionIndex];// get module ID
-      //const firstSection = randomSectionIndex.slice(0, 1);
-      let temp = createdSections.ops[i];
-      let newTemp = {temp
-      };
-      console.log(newTemp);
-
-     // console.log('section one is ' + temp.sectionNumber);
-//console.log(createdSections.toStr.slice(1,10));
+      const { _id: moduleId } = createdSections.ops[i];// get module ID
+      console.log(moduleId)
+      
       let paragraphId;
-      for (let i =0; i < (Math.floor(Math.random() * 10)); i += 1) {
-        const randomSectionIndex = Math.floor(Math.random() * createdParagraphs.ops.length);
-        paragraphId = createdParagraphs.ops[randomSectionIndex];// get Section ID
+      const result = createdParagraphs.ops.find( ({ paragraphRef }) => paragraphRef === '0' );
+      console.log(result);
+      if(!result) {
+        continue
+      } else {
+        paragraphId = result.ops[i];
+        console.log(paragraphId);
       }
-      // add the lesson to Section.moduleSection
       await Section.updateOne({ _id: moduleId }, { $addToSet: { sectionParagraph: paragraphId } });
     }
 
