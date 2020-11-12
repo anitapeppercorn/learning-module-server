@@ -137,7 +137,7 @@ db.once('open', async () => {
       await Lesson.updateOne({ _id: lessonId }, { $addToSet: { lessonSection: sectionId } });
     }
 
-    // Add Lession ObjectID to Modules
+    // Add Lesson ObjectID to Modules
     for (let i = 0; i < 100; i += 1) {
       const randomModuleIndex = Math.floor(Math.random() * createdModules.ops.length);
       const { _id: moduleId } = createdModules.ops[randomModuleIndex];// get module ID
@@ -149,6 +149,27 @@ db.once('open', async () => {
       // add the lesson to Module.moduleSection
       await Module.updateOne({ _id: moduleId }, { $addToSet: { moduleLesson: lessonId } });
     }
+
+    for (let i = 0; i < 100; i += 1) {
+      const randomSectionIndex = Math.floor(Math.random() * createdSections.ops.length);
+      const { _id: moduleId } = createdSections.ops[randomSectionIndex];// get module ID
+      //const firstSection = randomSectionIndex.slice(0, 1);
+      let temp = createdSections.ops[i];
+      let newTemp = {temp
+      };
+      console.log(newTemp);
+
+     // console.log('section one is ' + temp.sectionNumber);
+//console.log(createdSections.toStr.slice(1,10));
+      let paragraphId;
+      for (let i =0; i < (Math.floor(Math.random() * 10)); i += 1) {
+        const randomSectionIndex = Math.floor(Math.random() * createdParagraphs.ops.length);
+        paragraphId = createdParagraphs.ops[randomSectionIndex];// get Section ID
+      }
+      // add the lesson to Section.moduleSection
+      await Section.updateOne({ _id: moduleId }, { $addToSet: { sectionParagraph: paragraphId } });
+    }
+
     
     ////////////// End creating faker data
   console.log('all done!');
