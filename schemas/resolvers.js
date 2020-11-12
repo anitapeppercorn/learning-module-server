@@ -8,15 +8,15 @@ const resolvers = {
     categories: async () => {
       return await Category.find();
     },
-    modules: async (parent, { moduleCategory, moduleTitle, moduleSection, moduleVideo }) => {
+    modules: async (parent, { moduleCategory, moduleTitle, moduleLesso, moduleVideo }) => {
       const params = {};
 
       if (moduleCategory) {
         params.moduleCategory = moduleCategory;
       }
 
-      if (moduleSection) {
-        params.moduleSection = moduleSection;
+      if (moduleLesso) {
+        params.moduleLesso = moduleLesso;
       }
 
       if (moduleVideo) {
@@ -31,17 +31,17 @@ const resolvers = {
 
       return await Module.find(params)
       .populate('moduleCategory')
-      .populate('moduleSection')
+      .populate('moduleLesso')
       .populate('moduleVideo')
       ;
     },
     module: async (parent, { _id }) => {
       return await Module.findById(_id)
       .populate('moduleCategory')
-      .populate('moduleSection')
+      .populate('moduleLesso')
       .populate('moduleVideo');
     },
-    sections: async (parent, { sectionLesson, sectionTitle, }) => {
+    lessons: async (parent, { sectionLesson, sectionTitle, }) => {
       const params = {};
 
   
@@ -83,12 +83,12 @@ const resolvers = {
         const user = await User.findById(context.user._id)
         .populate({
           path: 'friends',
-          populate: 'moduleSection',
+          populate: 'moduleLesso',
           populate: 'friends'
         })
         .populate({
           path: 'completedModules',
-          populate: 'moduleSection'
+          populate: 'moduleLesso'
         });
 
         return user;

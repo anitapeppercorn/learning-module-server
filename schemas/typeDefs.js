@@ -21,22 +21,22 @@ const typeDefs = gql`
     paragraphReleaseDate: String
   }
 
-  type Lesson {
-    _id: ID
-    lessonNumber: String
-    lessonTitle: String
-    lessonOverview: String
-    lessonReleaseDate: String
-    lessonParagraph: [Paragraph]
-  }
-
   type Section {
     _id: ID
-    sectionNumber: Int
+    sectionNumber: String
     sectionTitle: String
     sectionOverview: String
     sectionReleaseDate: String
-    sectionLesson: [Lesson]
+    sectionParagraph: [Paragraph]
+  }
+
+  type Lesson {
+    _id: ID
+    lessonNumber: Int
+    lessonTitle: String
+    lessonOverview: String
+    lessonReleaseDate: String
+    lessonSection: [Section]
   }
 
   type Module {
@@ -48,7 +48,7 @@ const typeDefs = gql`
     modulePoster: [String]
     moduleCategory: Category
     moduleVideo: [Video]
-    moduleSection: [Section]
+    moduleLesson: [Lesson]
   }
 
   type Video {
@@ -80,12 +80,12 @@ const typeDefs = gql`
 
   type Query {
     categories: [Category]
-    modules(moduleCategory: ID, moduleTitle: String, moduleSection: ID, moduleVideo: ID): [Module]
+    modules(moduleCategory: ID, moduleTitle: String, moduleLesson: ID, moduleVideo: ID): [Module]
     module(_id: ID!): Module
-    sections(sectionTitle: String, lessonTitle: ID, ): [Section]
-    section(_id: ID!): Section
-    lessons(lessonTitle: String, lessonParagraph: ID): [Lesson]
+    lessons(lessonTitle: String, sectionTitle: ID, ): [Lesson]
     lesson(_id: ID!): Lesson
+    sections(sectionTitle: String, sectionParagraph: ID): [Section]
+    section(_id: ID!): Section
     paragraphs(paragraphRef: String, paragraphVideo: ID): [Paragraph]
     user: User
   }
