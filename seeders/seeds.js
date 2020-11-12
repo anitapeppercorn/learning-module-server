@@ -52,7 +52,7 @@ db.once('open', async () => {
 
   // create Lessons
   const lessonData = [];
-  for (let i = 0; i < 144; i += 1) {
+  for (let i = 0; i < 50; i += 1) {
     const lessonNumber = `${i}`;
     const lessonTitle = faker.commerce.productName();
     const lessonOverview = faker.lorem.words(Math.round(Math.random() * 20) + 1);
@@ -65,7 +65,7 @@ db.once('open', async () => {
 
    // create Sections 
    const sectionData = [];
-   for (let i = 0; i < 120; i += 1) {
+   for (let i = 0; i < 50; i += 1) {
      const sectionNumber = `${i}`;
      const sectionTitle = faker.commerce.productName();
      const sectionOverview = faker.lorem.words(Math.round(Math.random() * 20) + 1);
@@ -82,8 +82,8 @@ db.once('open', async () => {
 
     // create Paragraph
     const paragraphData = [];
-    for(let i = 0; i < 75; i +=1 ) {
-      const paragraphRef = `${i}`;
+    for(let i = 0; i <50; i +=1) {
+      const paragraphRef = `${getRandomInt(50)}`;
       const paragraphNumber = `${i}`;
       const paragraphContent = faker.lorem.words(Math.round(Math.random() * 100) + 1);
       const paragraphReleaseDate = faker.date.past();
@@ -94,7 +94,7 @@ db.once('open', async () => {
     }
     //seed the paragraph object array
     const createdParagraphs = await Paragraph.collection.insertMany(paragraphData);
-    console.log();
+    //console.log(createdParagraphs.ops[]);
 
     // create Image
     const imageData = [];
@@ -149,29 +149,29 @@ db.once('open', async () => {
       const { _id: moduleId } = createdModules.ops[randomModuleIndex];// get module ID
       let lessonId;
       for (let i =0; i < (Math.floor(Math.random() * 10)); i += 1) {
-        const randomSectionIndex = Math.floor(Math.random() * createdLessons.ops.length);
-        lessonId = createdLessons.ops[randomSectionIndex];// get Section ID
+        const randomLessonIndex = Math.floor(Math.random() * createdLessons.ops.length);
+        lessonId = createdLessons.ops[randomLessonIndex];// get Section ID
       }
       // add the lesson to Module.moduleSection
       await Module.updateOne({ _id: moduleId }, { $addToSet: { moduleLesson: lessonId } });
     }
 
-    for (let i = 0; i < 100; i += 1) {
+    // adding paragraphs to sections
+    
+    for (let i = 0; i < 50; i += 1) {
       const randomSectionIndex = Math.floor(Math.random() * createdSections.ops.length);
-      const { _id: moduleId } = createdSections.ops[i];// get module ID
-      console.log(moduleId)
+      const { _id: sectionId }  = createdSections.ops[randomSectionIndex];// get module ID
       
       let paragraphId;
-      const result = createdParagraphs.ops.find( ({ paragraphRef }) => paragraphRef === '0' );
-      console.log(result);
-      if(!result) {
-        continue
-      } else {
-        paragraphId = result.ops[i];
-        console.log(paragraphId);
+      for (let i =0; i < (Math.floor(Math.random() * 10)); i += 1) {
+        const randomSectionIndex = Math.floor(Math.random() * createdSections.ops.length);
+        paragraphId = createdSections.ops[randomSectionIndex];// get Section ID
       }
-      await Section.updateOne({ _id: moduleId }, { $addToSet: { sectionParagraph: paragraphId } });
-    }
+      // add the lesson to Module.moduleSection
+        await Section.updateOne({ _id: sectionId }, { $addToSet: { sectionParagraph: paragraphId } });
+      };
+      
+    
 
     
     ////////////// End creating faker data
