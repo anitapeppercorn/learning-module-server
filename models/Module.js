@@ -19,13 +19,13 @@ const moduleSchema = new Schema({
     type: Date,
     default: Date.now
   },
+  moduleCategory: {
+    type: String,
+    required: true,
+    trim: true
+  },
   modulePoster: {
     type: String
-  },
-  moduleCategory: {
-    type: Schema.Types.ObjectId,
-    ref: 'Category',
-    required: true
   },
   moduleVideo: [
     {
@@ -33,10 +33,10 @@ const moduleSchema = new Schema({
     ref: 'Video',
     }
   ],
-  moduleSection: [ 
+  moduleLesson: [ 
     {
     type: Schema.Types.ObjectId,
-    ref: 'Section',
+    ref: 'Lesson',
     required: true
   } 
 ]

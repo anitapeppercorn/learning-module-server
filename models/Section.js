@@ -16,10 +16,10 @@ const sectionSchema = new Schema({
     type: String,
     trim: true
   },
-  sectionLesson: [
+  sectionParagraph: [
     {
     type: Schema.Types.ObjectId,
-    ref: 'Lesson'
+    ref: 'Paragraph'
   }
 ]
 });

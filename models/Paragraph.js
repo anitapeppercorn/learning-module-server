@@ -3,11 +3,6 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const paragraphSchema = new Schema({
-  paragraphRef: {
-    type: String,
-    required: true,
-    trim: true
-},
   paragraphNumber: {
       type: Number,
       trim: true
@@ -16,10 +11,14 @@ const paragraphSchema = new Schema({
         type: String,
         trim: true,
     },
-    paragraphPoster: [
+    paragraphReleaseDate: {
+        type: String,
+        default: Date.now
+    },
+    paragraphImage: [
         {
             type: Schema.Types.ObjectId,
-            ref: 'Poster'
+            ref: 'Image'
         }
     ],
     paragraphVideo: [
@@ -27,11 +26,7 @@ const paragraphSchema = new Schema({
             type: Schema.Types.ObjectId,
             ref: 'Video'
         }
-    ],
-    paragraphReleaseDate: {
-        type: String,
-        default: Date.now
-    }
+    ]
 });
 
 const Paragraph = mongoose.model('Paragraph', paragraphSchema);

@@ -19,13 +19,13 @@ const lessonSchema = new Schema({
     type: Date,
     default: Date.now
   },
-  lessonParagraph: [
+  lessonSection: [
     {
       type: Schema.Types.ObjectId,
-      ref: 'Paragraph',
+      ref: 'Section',
     }
   ],
-  time:{
+  lessonTime:{
     type: String,
     trim: true
   }
