@@ -22,13 +22,19 @@ const paragraphSchema = new Schema({
     paragraphImage: [
         {
             type: Schema.Types.ObjectId,
-            ref: 'Image'
+            ref: 'Image',
+            validate: (arr) => {
+                return arr.filter(v => v === null).length === 0; 
+            }
         }
     ],
     paragraphVideo: [
         {
             type: Schema.Types.ObjectId,
-            ref: 'Video'
+            ref: 'Video',
+            validate: (arr) => {
+                return arr.filter(v => v === null).length === 0; 
+            }
         }
     ]
 });

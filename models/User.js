@@ -22,7 +22,10 @@ const userSchema = new Schema({
   friends: [
     {
       type: Schema.Types.ObjectId,
-      ref: 'User'
+      ref: 'User',
+      validate: (arr) => {
+        return arr.filter(v => v === null).length === 0; 
+    }
   }],
   completedModules: [{
     type: Schema.Types.ObjectId,

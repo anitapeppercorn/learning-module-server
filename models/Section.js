@@ -19,7 +19,10 @@ const sectionSchema = new Schema({
   sectionParagraph: [
     {
     type: Schema.Types.ObjectId,
-    ref: 'Paragraph'
+    ref: 'Paragraph',
+    validate: (arr) => {
+      return arr.filter(v => v === null).length === 0; 
+  }
   }
 ]
 });

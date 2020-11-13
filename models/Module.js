@@ -37,7 +37,10 @@ const moduleSchema = new Schema({
     {
     type: Schema.Types.ObjectId,
     ref: 'Lesson',
-    required: true
+    required: true,
+    validate: (arr) => {
+      return arr.filter(v => v === null).length === 0; 
+  }
   } 
 ]
 });

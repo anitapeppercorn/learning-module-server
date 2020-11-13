@@ -23,6 +23,9 @@ const lessonSchema = new Schema({
     {
       type: Schema.Types.ObjectId,
       ref: 'Section',
+      validate: (arr) => {
+        return arr.filter(v => v === null).length === 0; 
+    }
     }
   ],
   lessonTime:{
