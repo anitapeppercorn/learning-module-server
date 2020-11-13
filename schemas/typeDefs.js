@@ -80,7 +80,7 @@ const typeDefs = gql`
     module(_id: ID!): Module
     lessons(lessonTitle: String, lessonSection: ID, sectionParagraph:ID): [Lesson]
     lesson(_id: ID!): Lesson
-    sections(sectionTitle: String, sectionParagraph: ID): [Section]
+    sections(sectionNumber: Int,sectionTitle: String, sectionParagraph: ID): [Section]
     section(_id: ID!): Section
     paragraphs(_id: ID): [Paragraph]
     paragraph(_id: ID!): Paragraph
@@ -90,7 +90,7 @@ const typeDefs = gql`
   type Mutation {
     addUser(userName:String!, email: String!, password: String!): Auth
     updateUser(userName: String, email: String, password: String): User
-    updateModule(_id: ID!, completedModules: ID): User
+    updateModule(completedModules: ID): User
     login(email: String!, password: String!): Auth
     addFriend(friendId: ID!):User 
   }

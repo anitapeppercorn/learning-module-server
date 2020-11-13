@@ -78,7 +78,7 @@ const resolvers = {
       return await Lesson.findById(_id).populate('lessonSection');
     },
     // Sections
-    sections: async(parent, { sectionTitle, sectionParagraph }) => {
+    sections: async(parent, {sectionNumber, sectionTitle, sectionParagraph }) => {
       const params = {};
 
       if(sectionTitle) {
@@ -87,11 +87,15 @@ const resolvers = {
         };
       }
 
+      if(sectionNumber){
+        params.sectionNumber = sectionNumber
+      }
+
       if(sectionParagraph) {
         params.sectionParagraph;
       }
 
-      return await Section.find(params).populate('sectionParagraph');
+      return await Section.find(params).populate('sectionParagraph').populate('sectionTitle').populate('sectionOverview');
     },
     section: async (parent, { _id }) => {
       return await Section.findById(_id).populate('sectionParagraph');
@@ -148,8 +152,17 @@ const resolvers = {
       throw new AuthenticationError('Not logged in');
     },
     // Add completedModule
-    updateModule: async (parent, { _id, completedModules }) => {
-      return await User.findByIdAndUpdate(_id, { $addToSet: { completedModules: completedModules } }, { new: true });
+    updateModule: async (parent, { completedModules }, context) => {
+      if (context.user) {
+        const updatedUser = await User.findByIdAndUpdate(
+            { _id: context.user._id },
+            { $addToSet: {  completedModules: completedModules  } },
+            { new: true }
+        ).populate('friends')
+        .populate('completedModules');
+        return updatedUser;
+        }
+        throw new AuthenticationError('You need to be logged in!');
     },
     // Add Friend
     addFriend: async (parent, { friendId }, context) => {
