@@ -69,24 +69,24 @@ const resolvers = {
 
       return await Section.find(params);
     },
-    paragraphs: async (parent, { paragraphRef, paragraphVideo }) => {
-    
+    paragraphs: async (parent, {paragraphImage, paragraphVideo }) => {
+      const params = {};
+
       if (paragraphVideo) {
         params.paragraphVideo = paragraphVideo
       }
-
-      return await Paragraph.find(params);
-    },
-    paragraph: async (parent, { paragraphRef }) => {
-      const params = {};
-
-      if(paragraphRef) {
-        params.paragraphRef = 
-          paragraphRef
-        ;
+      if(paragraphImage) {
+        params.paragraphImage = paragraphImage
       }
 
-      return await Product.find(params).populate('paragraphVideo');
+      return await Paragraph.find(params)
+      .populate('paragraphImage')
+      .populate('paragraphVideo');
+    },
+    paragraph: async (parent, { _id }) => {
+      return await Paragraph.findById(_id)
+      .populate('paragraphImage')
+      .populate('paragraphVideo');
     },
     user: async (parent, args, context) => {
       if (context.user) {

@@ -73,6 +73,7 @@ const typeDefs = gql`
     token: ID
     user: User
   }
+  
 
   type Query {
     modules(moduleTitle: String, moduleLesson: ID, moduleVideo: ID): [Module]
@@ -81,8 +82,8 @@ const typeDefs = gql`
     lesson(_id: ID!): Lesson
     sections(sectionTitle: String, sectionParagraph: ID): [Section]
     section(_id: ID!): Section
-    paragraphs( paragraphVideo: Video): [Paragraph]
-    paragraph(paragraphRef: Int!): [Paragraph]
+    paragraphs(_id: ID): [Paragraph]
+    paragraph(_id: ID!): Paragraph
     user: User
   }
 
