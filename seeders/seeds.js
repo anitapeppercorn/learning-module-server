@@ -202,7 +202,9 @@ for (let i = 1; i < 5000; i += 1) {
   }
  // add the video to Paragraph.paragraphVideo
  await Paragraph.updateOne({ _id: paragraphId }, { $addToSet: { paragraphVideo: videoId } });
-}  
+}
+
+// Assign videos to 
 
 // Assign paragraphs to associated sections randomly: 
 for (let i = 1; i < 865; i += 1) {

@@ -1,19 +1,13 @@
-const { AuthenticationErro } = require('apollo-server-express');
-const { User, Category, Image, Lesson, Module, Paragraph, Section, Video} = require('../models');
+const { AuthenticationError } = require('apollo-server-express');
+const { User, Image, Lesson, Module, Paragraph, Section, Video} = require('../models');
 const { signToken } = require('../utils/auth');
 
 
 const resolvers = {
   Query: {
-    categories: async () => {
-      return await Category.find();
-    },
-    modules: async (parent, { moduleCategory, moduleTitle, moduleLesson, moduleVideo }) => {
+    
+    modules: async (parent, {moduleTitle, moduleLesson, moduleVideo }) => {
       const params = {};
-
-      if (moduleCategory) {
-        params.moduleCategory = moduleCategory;
-      }
 
       if (moduleLesson) {
         params.moduleLesson = moduleLesson;
@@ -30,18 +24,18 @@ const resolvers = {
       }
 
       return await Module.find(params)
-      .populate('moduleCategory')
+  
       .populate('moduleLesson')
       .populate('moduleVideo')
       ;
     },
     module: async (parent, { _id }) => {
       return await Module.findById(_id)
-      .populate('moduleCategory')
+  
       .populate('moduleLesson')
       .populate('moduleVideo');
     },
-    lessons: async (parent, { lessonSection, lessonTitle, }) => {
+    lessons: async (parent, { lessonSection, lessonTitle }) => {
       const params = {};
 
   
@@ -60,23 +54,39 @@ const resolvers = {
       ;
     },
     lesson: async (parent, { _id }) => {
-      return await Section.findById(_id).populate('lessonSection');
+      return await Lesson.findById(_id).populate('lessonSection');
     },
-    paragraphs: async (parent, { paragraphRef, paragraphVideo }) => {
+    sections: async(parent, { sectionTitle, sectionParagraph }) => {
       const params = {};
 
-      if(paragraphRef) {
-        params.paragraphRef = {
-          $regex: paragraphRef
-        };
+      if(sectionTitle) {
+        params.sectionTitle = sectionTitle;
       }
 
+      if(sectionParagraph) {
+        params.sectionParagraph;
+      }
+
+      return await Section.find(params);
+    },
+    paragraphs: async (parent, { paragraphRef, paragraphVideo }) => {
+    
       if (paragraphVideo) {
         params.paragraphVideo = paragraphVideo
       }
 
-      return await Paragraph.find(params)
-      .populate('paragraphVideo')
+      return await Paragraph.find(params);
+    },
+    paragraph: async (parent, { paragraphRef }) => {
+      const params = {};
+
+      if(paragraphRef) {
+        params.paragraphRef = 
+          paragraphRef
+        ;
+      }
+
+      return await Product.find(params).populate('paragraphVideo');
     },
     user: async (parent, args, context) => {
       if (context.user) {
