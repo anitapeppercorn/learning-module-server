@@ -92,6 +92,7 @@ const typeDefs = gql`
     updateUser(userName: String, email: String, password: String): User
     updateModule(_id: ID!, completedModules: ID): User
     login(email: String!, password: String!): Auth
+    addFriend(friendId: ID!):User 
   }
 
 `;

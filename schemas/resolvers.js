@@ -147,10 +147,25 @@ const resolvers = {
 
       throw new AuthenticationError('Not logged in');
     },
-    // Update completedModule
+    // Add completedModule
     updateModule: async (parent, { _id, completedModules }) => {
       return await User.findByIdAndUpdate(_id, { $addToSet: { completedModules: completedModules } }, { new: true });
     },
+    // Add Friend
+    addFriend: async (parent, { friendId }, context) => {
+      if (context.user) {
+          const updatedUser = await User.findByIdAndUpdate(
+              { _id: context.user._id },
+              { $addToSet: { friends: friendId } },
+              { new: true }
+          ).populate('friends')
+          .populate('completedModules');
+
+          return updatedUser;
+      }
+
+      throw new AuthenticationError('You need to be logged in!');
+  },
     // Login
     login: async (parent, { email, password }) => {
       const user = await User.findOne({ email });
