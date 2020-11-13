@@ -175,7 +175,7 @@ const resolvers = {
       //     ).populate('friends')
       //     .populate('completedModules');
 
-      return await User.findByIdAndUpdate(_id, { $addToSet: { friendId: friendId } }, { new: true });
+      return await User.findByIdAndUpdate(_id, { $addToSet: { friends: friendId } }, { new: true });
      // }
 
       // throw new AuthenticationError('You need to be logged in!');
