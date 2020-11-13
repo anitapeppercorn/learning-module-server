@@ -152,32 +152,32 @@ const resolvers = {
       throw new AuthenticationError('Not logged in');
     },
     // Add completedModule
-    updateModule: async (parent, { completedModules }, context) => {
-      if (context.user) {
-        const updatedUser = await User.findByIdAndUpdate(
-            { _id: context.user._id },
-            { $addToSet: {  completedModules: completedModules  } },
-            { new: true }
-        ).populate('friends')
-        .populate('completedModules');
-        return updatedUser;
+    updateModule: async (parent, { _id, completedModules }) => {
+      // if (context.user) {
+      //   const updatedUser = await User.findByIdAndUpdate(
+      //       { _id: context.user._id },
+      //       { $addToSet: {  completedModules: completedModules  } },
+      //       { new: true }
+      //   ).populate('friends')
+      //   .populate('completedModules');
+      return await User.findByIdAndUpdate(_id, { $addToSet: { completedModules: completedModules } }, { new: true });
         }
-        throw new AuthenticationError('You need to be logged in!');
+       // throw new AuthenticationError('You need to be logged in!');
     },
     // Add Friend
-    addFriend: async (parent, { friendId }, context) => {
-      if (context.user) {
-          const updatedUser = await User.findByIdAndUpdate(
-              { _id: context.user._id },
-              { $addToSet: { friends: friendId } },
-              { new: true }
-          ).populate('friends')
-          .populate('completedModules');
+    addFriend: async (parent, { _id ,friendId }) => {
+      // if (context.user) {
+      //     const updatedUser = await User.findByIdAndUpdate(
+      //         { _id: context.user._id },
+      //         { $addToSet: { friends: friendId } },
+      //         { new: true }
+      //     ).populate('friends')
+      //     .populate('completedModules');
 
-          return updatedUser;
-      }
+      return await User.findByIdAndUpdate(_id, { $addToSet: { friendId: friendId } }, { new: true });
+     // }
 
-      throw new AuthenticationError('You need to be logged in!');
+      // throw new AuthenticationError('You need to be logged in!');
   },
     // Login
     login: async (parent, { email, password }) => {
@@ -198,6 +198,6 @@ const resolvers = {
       return { token, user };
     }
 }
-}
+
 
 module.exports = resolvers;
