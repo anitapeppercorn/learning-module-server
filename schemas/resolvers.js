@@ -161,9 +161,10 @@ const resolvers = {
       //   ).populate('friends')
       //   .populate('completedModules');
       return await User.findByIdAndUpdate(_id, { $addToSet: { completedModules: completedModules } }, { new: true });
-        }
-       // throw new AuthenticationError('You need to be logged in!');
+      
     },
+       // throw new AuthenticationError('You need to be logged in!');
+    
     // Add Friend
     addFriend: async (parent, { _id ,friendId }) => {
       // if (context.user) {
@@ -198,6 +199,6 @@ const resolvers = {
       return { token, user };
     }
 }
-
+}
 
 module.exports = resolvers;
