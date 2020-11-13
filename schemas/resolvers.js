@@ -1,13 +1,18 @@
 const { AuthenticationError } = require('apollo-server-express');
 const { User, Image, Lesson, Module, Paragraph, Section, Video} = require('../models');
+const { populate } = require('../models/User');
 const { signToken } = require('../utils/auth');
 
 
 const resolvers = {
   Query: {
     
-    modules: async (parent, {moduleTitle, moduleLesson, moduleVideo }) => {
+    modules: async (parent, {moduleTitle, moduleLesson, moduleVideo, lessonSection, sectionParagraph}) => {
       const params = {};
+
+      if(sectionParagraph) {
+        params.sectionParagraph = sectionParagraph;
+      }
 
       if (moduleLesson) {
         params.moduleLesson = moduleLesson;
@@ -17,6 +22,10 @@ const resolvers = {
         params.moduleVideo = moduleVideo;
       }
 
+      if (lessonSection) {
+        params.lessonSection = lessonSection;
+      }
+
       if(moduleTitle) {
         params.moduleTitle = {
           $regex: moduleTitle
@@ -24,9 +33,16 @@ const resolvers = {
       }
 
       return await Module.find(params)
-  
       .populate('moduleLesson')
       .populate('moduleVideo')
+      .populate({
+        path: 'moduleLesson',
+        populate: 'lessonSection',
+      })
+      .populate({
+        path:'moduleLesson.lessonSection',
+        populate:'sectionParagraph'
+      })
       ;
     },
     module: async (parent, { _id }) => {
@@ -35,10 +51,13 @@ const resolvers = {
       .populate('moduleLesson')
       .populate('moduleVideo');
     },
-    lessons: async (parent, { lessonSection, lessonTitle }) => {
+    lessons: async (parent, { lessonSection, lessonTitle, sectionParagraph }) => {
       const params = {};
 
-  
+      if(sectionParagraph) {
+        params.sectionParagraph = sectionParagraph;
+      }
+
       if (lessonSection) {
         params.lessonSection = lessonSection;
       }
@@ -49,9 +68,10 @@ const resolvers = {
         };
       }
 
-      return await Section.find(params)
-      .populate('lessonSection')
-      ;
+      return await Lesson.find().populate('lessonSection').populate({
+        path:'lessonSection',
+        populate:'sectionParagraph'
+      });
     },
     lesson: async (parent, { _id }) => {
       return await Lesson.findById(_id).populate('lessonSection');
@@ -60,14 +80,16 @@ const resolvers = {
       const params = {};
 
       if(sectionTitle) {
-        params.sectionTitle = sectionTitle;
+        params.sectionTitle = {
+          $regex: sectionTitle
+        };
       }
 
       if(sectionParagraph) {
         params.sectionParagraph;
       }
 
-      return await Section.find(params);
+      return await Section.find(params).populate('sectionParagraph');
     },
     paragraphs: async (parent, {paragraphImage, paragraphVideo }) => {
       const params = {};

@@ -76,9 +76,9 @@ const typeDefs = gql`
   
 
   type Query {
-    modules(moduleTitle: String, moduleLesson: ID, moduleVideo: ID): [Module]
+    modules(moduleTitle: String, moduleLesson: ID, moduleVideo: ID, lessonSection: ID, sectionParagraph: ID): [Module]
     module(_id: ID!): Module
-    lessons(lessonTitle: String, sectionTitle: ID ): [Lesson]
+    lessons(lessonTitle: String, lessonSection: ID, sectionParagraph:ID): [Lesson]
     lesson(_id: ID!): Lesson
     sections(sectionTitle: String, sectionParagraph: ID): [Section]
     section(_id: ID!): Section
