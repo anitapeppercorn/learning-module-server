@@ -6,7 +6,7 @@ const { signToken } = require('../utils/auth');
 
 const resolvers = {
   Query: {
-    
+    // Modules
     modules: async (parent, {moduleTitle, moduleLesson, moduleVideo, lessonSection, sectionParagraph}) => {
       const params = {};
 
@@ -51,6 +51,7 @@ const resolvers = {
       .populate('moduleLesson')
       .populate('moduleVideo');
     },
+    // Lessons
     lessons: async (parent, { lessonSection, lessonTitle, sectionParagraph }) => {
       const params = {};
 
@@ -76,6 +77,7 @@ const resolvers = {
     lesson: async (parent, { _id }) => {
       return await Lesson.findById(_id).populate('lessonSection');
     },
+    // Sections
     sections: async(parent, { sectionTitle, sectionParagraph }) => {
       const params = {};
 
@@ -91,6 +93,10 @@ const resolvers = {
 
       return await Section.find(params).populate('sectionParagraph');
     },
+    section: async (parent, { _id }) => {
+      return await Section.findById(_id).populate('sectionParagraph');
+    },
+    // Paragraphs
     paragraphs: async (parent, {paragraphImage, paragraphVideo }) => {
       const params = {};
 
@@ -110,23 +116,56 @@ const resolvers = {
       .populate('paragraphImage')
       .populate('paragraphVideo');
     },
+    // User
     user: async (parent, args, context) => {
       if (context.user) {
-        const user = await User.findById(context.user._id)
+        const user = await User.findById(context.user._id).populate('friends')
         .populate({
           path: 'friends',
-          populate: 'moduleLesson',
+          populate: 'completedModules',
           populate: 'friends'
-        })
-        .populate({
-          path: 'completedModules',
-          populate: 'moduleLesson'
         });
 
         return user;
       }
+      throw new AuthenticationError('Not logged in');
+    }
+
+  },
+  Mutation: {
+    // User add and update
+    addUser: async (parent, args) => {
+      const user = await User.create(args);
+      const token = signToken(user);
+
+      return { token, user };
     },
-  }
+    updateUser: async (parent, args, context) => {
+      if (context.user) {
+        return await User.findByIdAndUpdate(context.user._id, args, { new: true });
+      }
+
+      throw new AuthenticationError('Not logged in');
+    },
+    // Login
+    login: async (parent, { email, password }) => {
+      const user = await User.findOne({ email });
+
+      if (!user) {
+        throw new AuthenticationError('Incorrect credentials');
+      }
+
+      const correctPw = await user.isCorrectPassword(password);
+
+      if (!correctPw) {
+        throw new AuthenticationError('Incorrect credentials');
+      }
+
+      const token = signToken(user);
+
+      return { token, user };
+    }
+}
 }
 
 module.exports = resolvers;

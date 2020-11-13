@@ -27,8 +27,8 @@ db.once('open', async () => {
 // assume 6 lessons per module = 144
 // assume 6 sections per lesson = 864 total sections
 // assume 6 paragraphs per section = 5184 paragraphs
-// added 24 zoom recordings
-// assume images and videos to paragraph are randomly assigned; zoom recordings assigned to modules
+// assume images and videos to paragraph are randomly assigned
+// added zoom recordings assigned to modules
 // assume friends and completed modules to users are randomly assigned
 
 
@@ -125,7 +125,6 @@ db.once('open', async () => {
   }
   //seed the video object array
   const createdVideos = await Video.collection.insertMany(videoData);
-
 
 ////////////Creating Associations Between Collections
 ////*********************************************////
