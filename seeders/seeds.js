@@ -48,8 +48,6 @@ db.once('open', async () => {
     const moduleReleaseDate = faker.date.past();
     const moduleCategory = `Category${(Math.round(i * 0.2) + 1)}`;
     const modulePoster = faker.image.imageUrl();
-    // const moduleVideo = await createdVideos.insertedIds[`${i}`]; // ANITA - this works, but will need updating when we have mutliple Videos
-    //const moduleLesson = await createdLessons.insertedIds[`${i}`]; // ANITA This needs updating for mutliple Sections
     // store the modules
     moduleData.push({ moduleNumber, moduleTitle, moduleOverview, moduleReleaseDate, moduleCategory, modulePoster });
   }
@@ -74,7 +72,6 @@ db.once('open', async () => {
     const sectionNumber = `${i}`;
     const sectionTitle = faker.commerce.productName();
     const sectionOverview = faker.lorem.words(Math.round(Math.random() * 20) + 1);
-    //const sectionParagraph = x; //assign random or certain unique 6 paragraphs as an array to this section;
     //store the section object
     sectionData.push({ sectionNumber, sectionTitle, sectionOverview });
   };
@@ -92,8 +89,6 @@ db.once('open', async () => {
     const paragraphNumber = `${i}`;
     const paragraphContent = faker.lorem.words(Math.round(Math.random() * 100) + 1);
     const paragraphReleaseDate = faker.date.past();
-      //const paragraphImage = x;//randomly assigned image ID. can be array of 0, 1 or 2
-      //const paragraphVideo = x;//randomly assigned video ID
       //store the paragraph object
     paragraphData.push({ paragraphRef, paragraphNumber, paragraphContent, paragraphReleaseDate });
   }
@@ -135,7 +130,7 @@ db.once('open', async () => {
   for (let i = 1; i < 5; i += 1) {
     const randomUserIndex = Math.floor(Math.random() * createdUsers.ops.length);
     const { _id: userId } = createdUsers.ops[randomUserIndex];// get USER ID
-    let friendId;
+    let friendId=[];
     for (let i =1; i < (Math.floor(Math.random() * 4)); i += 1) {
       const randomFriendIndex = Math.floor(Math.random() * createdUsers.ops.length);
       friendId = createdUsers.ops[randomFriendIndex];// get Friend ID
@@ -148,7 +143,7 @@ db.once('open', async () => {
   for (let i = 1; i < 5; i += 1) {
     const randomUserIndex = Math.floor(Math.random() * createdUsers.ops.length);
     const { _id: userId } = createdUsers.ops[randomUserIndex];// get USER ID
-    let completedModuleId;
+    let completedModuleId=[];
     for (let i =1; i < (Math.floor(Math.random() * 4)); i += 1) {
       const randomcompletedModuleIndex = Math.floor(Math.random() * createdModules.ops.length);
       completedModuleId = createdModules.ops[randomcompletedModuleIndex];// get completedModule ID
@@ -158,15 +153,15 @@ db.once('open', async () => {
   }
 
 // Assign lessons to associated modules randomly:
-  for (let i = 1; i < 25; i += 1) {
+  for (let i = 0; i < 23; i += 1) {
     const randomModuleIndex = Math.floor(Math.random() * createdModules.ops.length);
     const { _id: moduleId } = createdModules.ops[randomModuleIndex];// get module ID
-    let lessonId;
-    for (let i =1; i < (Math.floor(Math.random() * 1440)); i += 1) {
+    let lessonId=[];
+    for (let i =1; i < 7; i += 1) {
       const randomLessonIndex = Math.floor(Math.random() * createdLessons.ops.length);
-      lessonId = createdLessons.ops[randomLessonIndex];// get Section ID
+      lessonId = createdLessons.ops[randomLessonIndex];// get lesson IDs
     }
-   // add the lesson to Module.moduleSection
+   // add the lessons to Module.moduleSection
    await Module.updateOne({ _id: moduleId }, { $addToSet: { moduleLesson: lessonId } });
   }
 
@@ -174,8 +169,8 @@ db.once('open', async () => {
   for (let i = 1; i < 145; i += 1) {
     const randomLessonIndex = Math.floor(Math.random() * createdLessons.ops.length);
     const { _id: lessonId } = createdLessons.ops[randomLessonIndex];// get lesson ID
-    let sectionId;
-    for (let i =1; i < (Math.floor(Math.random() * 8640)); i += 1) {
+    let sectionId=[];
+    for (let i =1; i < (Math.floor(Math.random() * 7)); i += 1) {
       const randomSectionIndex = Math.floor(Math.random() * createdSections.ops.length);
       sectionId = createdSections.ops[randomSectionIndex];// get Section ID
     }
@@ -184,11 +179,11 @@ db.once('open', async () => {
   }
 
 // Assign images to associated paragraph randomly: 
-for (let i = 1; i < 865; i += 1) {
+for (let i = 1; i < 5000; i += 1) {
   const randomParagraphIndex = Math.floor(Math.random() * createdParagraphs.ops.length);
   const { _id: paragraphId } = createdParagraphs.ops[randomParagraphIndex];// get Paragraph ID
-  let imageId;
-  for (let i =1; i < (Math.floor(Math.random() * 8640)); i += 1) {
+  let imageId=[];
+  for (let i =1; i < (Math.floor(Math.random() * 3)); i += 1) {
     const randomImageIndex = Math.floor(Math.random() * createdImages.ops.length);
     imageId = createdImages.ops[randomImageIndex];// get Image ID
   }
@@ -197,11 +192,11 @@ for (let i = 1; i < 865; i += 1) {
 }  
 
 // Assign videos to associated paragraph randomly: 
-for (let i = 1; i < 865; i += 1) {
+for (let i = 1; i < 5000; i += 1) {
   const randomParagraphIndex = Math.floor(Math.random() * createdParagraphs.ops.length);
   const { _id: paragraphId } = createdParagraphs.ops[randomParagraphIndex];// get Paragraph ID
-  let videoId;
-  for (let i =1; i < (Math.floor(Math.random() * 8640)); i += 1) {
+  let videoId=[];
+  for (let i =1; i < (Math.floor(Math.random() * 3)); i += 1) {
     const randomVideoIndex = Math.floor(Math.random() * createdVideos.ops.length);
     videoId = createdVideos.ops[randomVideoIndex];// get Video ID
   }
@@ -213,9 +208,9 @@ for (let i = 1; i < 865; i += 1) {
 for (let i = 1; i < 865; i += 1) {
   const randomSectionIndex = Math.floor(Math.random() * createdSections.ops.length);
   const { _id: sectionId } = createdSections.ops[randomSectionIndex];// get Section ID
-  let paragraphId;
-  for (let i =1; i < (Math.floor(Math.random() * 8640)); i += 1) {
-    const randomParagraphIndex = Math.floor(Math.random() * createdParagraphs.ops.length);
+  let paragraphId=[];
+  for (let i =1; i < 7; i += 1) {
+    const randomParagraphIndex = Math.ceil(Math.random() * createdParagraphs.ops.length);
     paragraphId = createdParagraphs.ops[randomParagraphIndex];// get Paragraph ID
   }
  // add the section to Section.sectionParagraph
