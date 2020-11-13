@@ -21,16 +21,16 @@ db.once('open', async () => {
   await Paragraph.deleteMany({});
   await Image.deleteMany({});
   await Video.deleteMany({});
-  //await Recording.deleteMany({});
 
 // assume 4 users
 // assume 24 modules
-// added 48 recordings
 // assume 6 lessons per module = 144
 // assume 6 sections per lesson = 864 total sections
 // assume 6 paragraphs per section = 5184 paragraphs
-// assume images and videos to paragraph are randomly assigned
+// added 24 zoom recordings
+// assume images and videos to paragraph are randomly assigned; zoom recordings assigned to modules
 // assume friends and completed modules to users are randomly assigned
+
 
   // create 4 Users
   const userData = [];
@@ -55,34 +55,6 @@ db.once('open', async () => {
     moduleData.push({ moduleNumber, moduleTitle, moduleOverview, moduleReleaseDate, moduleCategory, modulePoster });
   }
   const createdModules = await Module.collection.insertMany(moduleData);
-
-  const recordingData = await Video.collection.insertMany([
-  {videoNumber: 0,videoContent: ' URL for Recording Video '},
-   {videoNumber: 1,videoContent: ' URL for Recording Video '},
-   {videoNumber: 2,videoContent: ' URL for Recording Video '},
-   {videoNumber: 3,videoContent: ' URL for Recording Video '},
-   {videoNumber: 4,videoContent: ' URL for Recording Video '},
-   {videoNumber: 5,videoContent: ' URL for Recording Video '},
-   {videoNumber: 6,videoContent: ' URL for Recording Video '},
-   {videoNumber: 7,videoContent: ' URL for Recording Video '},
-   {videoNumber: 8,videoContent: ' URL for Recording Video '},
-   {videoNumber: 9,videoContent: ' URL for Recording Video '},
-   {videoNumber: 10,videoContent: ' URL for Recording Video '},
-   {videoNumber: 11,videoContent: ' URL for Recording Video '},
-   {videoNumber: 12,videoContent: ' URL for Recording Video '},
-   {videoNumber: 13,videoContent: ' URL for Recording Video '},
-   {videoNumber: 14,videoContent: ' URL for Recording Video '},
-   {videoNumber: 15,videoContent: ' URL for Recording Video '},
-   {videoNumber: 16,videoContent: ' URL for Recording Video '},
-   {videoNumber: 17,videoContent: ' URL for Recording Video '},
-   {videoNumber: 18,videoContent: ' URL for Recording Video '},
-   {videoNumber: 19,videoContent: ' URL for Recording Video '},
-   {videoNumber: 20,videoContent: ' URL for Recording Video '},
-   {videoNumber: 21,videoContent: ' URL for Recording Video '},
-   {videoNumber: 22,videoContent: ' URL for Recording Video '},
-   {videoNumber: 23,videoContent: ' URL for Recording Video '},
-   {videoNumber: 24,videoContent: ' URL for Recording Video '}
-  ]);
 
   // create 144 Lessons
   const lessonData = [];
@@ -142,17 +114,18 @@ db.once('open', async () => {
 
   // create Video
   const videoData = [];
-  for(let i = 25; i < 50; i +=1 ) {
+  for(let i = 1; i < 50; i +=1 ) {
     const videoNumber = `${i}`;
     const videoTitle = faker.commerce.productName();
-    const videoContent = faker.image.imageUrl();
     const videoOverview = faker.lorem.words(Math.round(Math.random() * 20) + 1);
     const videoReleaseDate = faker.date.past();
+    const videoContent = faker.image.imageUrl();
       //store the video object
     videoData.push({ videoNumber, videoTitle, videoOverview, videoContent, videoReleaseDate });
   }
   //seed the video object array
   const createdVideos = await Video.collection.insertMany(videoData);
+
 
 ////////////Creating Associations Between Collections
 ////*********************************************////
@@ -193,12 +166,22 @@ db.once('open', async () => {
       const randomLessonIndex = Math.floor(Math.random() * createdLessons.ops.length);
       lessonId = createdLessons.ops[randomLessonIndex];// get lesson IDs
     }
-    // adding recording to each module
-    let recordingId=[];
-    recordingId.push(recordingData.ops[i])
    
    // add the lessons to Module.moduleSection
-   await Module.updateMany({ _id: moduleId }, { $addToSet: { moduleLesson: lessonId, moduleVideo :recordingId}});
+   await Module.updateOne({ _id: moduleId }, { $addToSet: { moduleLesson: lessonId} });
+  }
+
+  // Assign recordings to associated modules:
+  for (let i = 0; i < 48; i += 1) {
+    const randomModuleIndex = Math.floor(Math.random() * createdModules.ops.length);
+    const { _id: moduleId } = createdModules.ops[randomModuleIndex];// get module ID
+
+    // adding recording to each module
+    let recordingId=[];
+    recordingId.push(createdVideos.ops[i]);
+   
+   // add the lessons to Module.moduleSection
+   await Module.updateOne({ _id: moduleId }, { $addToSet: { moduleVideo: recordingId} });
   }
 
 // Assign sections to associated lessons randomly: 
