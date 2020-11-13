@@ -147,6 +147,10 @@ const resolvers = {
 
       throw new AuthenticationError('Not logged in');
     },
+    // Update completedModule
+    updateModule: async (parent, { _id, completedModules }) => {
+      return await User.findByIdAndUpdate(_id, { $addToSet: { completedModules: completedModules } }, { new: true });
+    },
     // Login
     login: async (parent, { email, password }) => {
       const user = await User.findOne({ email });
