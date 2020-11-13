@@ -19,13 +19,13 @@ const moduleSchema = new Schema({
     type: Date,
     default: Date.now
   },
+  moduleCategory: {
+    type: String,
+    required: true,
+    trim: true
+  },
   modulePoster: {
     type: String
-  },
-  moduleCategory: {
-    type: Schema.Types.ObjectId,
-    ref: 'Category',
-    required: true
   },
   moduleVideo: [
     {
@@ -33,11 +33,14 @@ const moduleSchema = new Schema({
     ref: 'Video',
     }
   ],
-  moduleSection: [ 
+  moduleLesson: [ 
     {
     type: Schema.Types.ObjectId,
-    ref: 'Section',
-    required: true
+    ref: 'Lesson',
+    required: true,
+    validate: (arr) => {
+      return arr.filter(v => v === null).length === 0; 
+  }
   } 
 ]
 });

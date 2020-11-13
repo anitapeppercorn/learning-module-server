@@ -3,35 +3,40 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const paragraphSchema = new Schema({
-  paragraphRef: {
-    type: String,
-    required: true,
-    trim: true
-},
-  paragraphNumber: {
-      type: Number,
-      trim: true
-    },
+    paragraphRef: {
+        type: Number,
+        trim: true
+        },
+    paragraphNumber: {
+        type: Number,
+        trim: true
+        },
     paragraphContent: {
         type: String,
         trim: true,
     },
-    paragraphPoster: [
+    paragraphReleaseDate: {
+        type: String,
+        default: Date.now
+    },
+    paragraphImage: [
         {
             type: Schema.Types.ObjectId,
-            ref: 'Poster'
+            ref: 'Image',
+            validate: (arr) => {
+                return arr.filter(v => v === null).length === 0; 
+            }
         }
     ],
     paragraphVideo: [
         {
             type: Schema.Types.ObjectId,
-            ref: 'Video'
+            ref: 'Video',
+            validate: (arr) => {
+                return arr.filter(v => v === null).length === 0; 
+            }
         }
-    ],
-    paragraphReleaseDate: {
-        type: String,
-        default: Date.now
-    }
+    ]
 });
 
 const Paragraph = mongoose.model('Paragraph', paragraphSchema);

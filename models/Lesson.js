@@ -19,13 +19,16 @@ const lessonSchema = new Schema({
     type: Date,
     default: Date.now
   },
-  lessonParagraph: [
+  lessonSection: [
     {
       type: Schema.Types.ObjectId,
-      ref: 'Paragraph',
+      ref: 'Section',
+      validate: (arr) => {
+        return arr.filter(v => v === null).length === 0; 
+    }
     }
   ],
-  time:{
+  lessonTime:{
     type: String,
     trim: true
   }

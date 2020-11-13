@@ -2,10 +2,9 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 const bcrypt = require('bcrypt');
-const Progress = require('./Progress');
 
 const userSchema = new Schema({
-  username: {
+  userName: {
     type: String,
     required: true,
     trim: true
@@ -23,7 +22,10 @@ const userSchema = new Schema({
   friends: [
     {
       type: Schema.Types.ObjectId,
-      ref: 'User'
+      ref: 'User',
+      validate: (arr) => {
+        return arr.filter(v => v === null).length === 0; 
+    }
   }],
   completedModules: [{
     type: Schema.Types.ObjectId,

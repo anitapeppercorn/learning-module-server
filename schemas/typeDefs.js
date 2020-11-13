@@ -11,18 +11,9 @@ const typeDefs = gql`
     imageReleaseDate: String
   }
 
-  type Lesson {
-    _id: ID
-    lessonNumber: String
-    lessonTitle: String
-    lessonOverview: String
-    lessonReleaseDate: String
-    lessonParagraph: [Paragraph]
-  }
-
   type Paragraph {
     _id: ID
-    paragraphRef: String
+    paragraphRef: Int
     paragraphNumber: Int
     paragraphContent: String
     paragraphPoster: [String]
@@ -36,7 +27,17 @@ const typeDefs = gql`
     sectionTitle: String
     sectionOverview: String
     sectionReleaseDate: String
-    sectionLesson: [Lesson]
+    sectionParagraph: [Paragraph]
+  }
+
+  type Lesson {
+    _id: ID
+    lessonNumber: Int
+    lessonTitle: String
+    lessonOverview: String
+    lessonReleaseDate: String
+    lessonSection: [Section]
+    lessonTime: String
   }
 
   type Module {
@@ -46,12 +47,13 @@ const typeDefs = gql`
     moduleOverview: String
     moduleReleaseDate: String
     modulePoster: [String]
-    moduleCategory: String
+    moduleCategory: Category
     moduleVideo: [Video]
-    moduleSection: [Section]
+    moduleLesson: [Lesson]
   }
 
   type Video {
+    _id: ID
     videoNumber: Int
     videoTitle: String
     videoContent: String
@@ -61,21 +63,15 @@ const typeDefs = gql`
 
   type User {
     _id: ID!
-    username: String
+    userName: String
     email: String
     friends: [User]
-    completedModules: [Progress]
+    completedModules: [Module]
   }
 
   type Category {
     _id: ID
     name: String
-  }
-
-  type Progress {
-    _id: ID!
-    finishDate: String
-    modules: [Module]
   }
 
   type Auth {
@@ -84,21 +80,21 @@ const typeDefs = gql`
   }
 
   type Query {
-    completed(_id: ID!): Progress
-    modules: [Module]
-    module(_id: ID!): Module
     categories: [Category]
-    lessons(section: ID): [Lesson]
-    sections: [Section]
-    paragraphs: [Paragraph]
-
+    modules(moduleCategory: ID, moduleTitle: String, moduleLesson: ID, moduleVideo: ID): [Module]
+    module(_id: ID!): Module
+    lessons(lessonTitle: String, sectionTitle: ID, ): [Lesson]
+    lesson(_id: ID!): Lesson
+    sections(sectionTitle: String, sectionParagraph: ID): [Section]
+    section(_id: ID!): Section
+    paragraphs( paragraphVideo: ID): [Paragraph]
     user: User
   }
 
   type Mutation {
-    addUser(username: String!, email: String!, password: String!): Auth
-    addCompleted(modules: [ID]!): Progress
-    updateUser(username: String, email: String, password: String): User
+    addUser(userName:String!, email: String!, password: String!): Auth
+    updateUser(userName: String, email: String, password: String): User
+    updateModule(_id: ID!, completedModules: String!): Module
     login(email: String!, password: String!): Auth
   }
 

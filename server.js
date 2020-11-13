@@ -29,7 +29,7 @@ if (process.env.NODE_ENV === 'production') {
   
 }
 
-var files = fs.readdirSync('./data/');
+//var files = fs.readdirSync('./data/');
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/build/index.html'));

@@ -1,5 +1,4 @@
 const User = require('./User');
-const Category = require('./Category');
 const Module = require('./Module');
 const Section = require('./Section');
 const Lesson = require('./Lesson');
@@ -10,7 +9,6 @@ const Video = require('./Video');
 
 module.exports = { 
     User, 
-    Category, 
     Module,
     Section, 
     Lesson,
