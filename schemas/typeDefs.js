@@ -16,7 +16,7 @@ const typeDefs = gql`
     paragraphRef: Int
     paragraphNumber: Int
     paragraphContent: String
-    paragraphImage: [String]
+    paragraphImage: [Image]
     paragraphVideo: [Video]
     paragraphReleaseDate: String
   }
@@ -55,7 +55,7 @@ const typeDefs = gql`
     moduleTitle: String
     moduleOverview: String
     moduleReleaseDate: String
-    modulePoster: [String]
+    modulePoster: String
     moduleCategory: String
     moduleVideo: [Video]
     moduleLesson: [Lesson]
