@@ -11,6 +11,7 @@ const {
   Image,
   Video
 } = require('../models');
+const { updateMany } = require('../models/User');
 
 db.once('open', async () => {
   await User.deleteMany({});
@@ -20,9 +21,11 @@ db.once('open', async () => {
   await Paragraph.deleteMany({});
   await Image.deleteMany({});
   await Video.deleteMany({});
+  //await Recording.deleteMany({});
 
 // assume 4 users
 // assume 24 modules
+// added 48 recordings
 // assume 6 lessons per module = 144
 // assume 6 sections per lesson = 864 total sections
 // assume 6 paragraphs per section = 5184 paragraphs
@@ -52,6 +55,34 @@ db.once('open', async () => {
     moduleData.push({ moduleNumber, moduleTitle, moduleOverview, moduleReleaseDate, moduleCategory, modulePoster });
   }
   const createdModules = await Module.collection.insertMany(moduleData);
+
+  const recordingData = await Video.collection.insertMany([
+  {videoNumber: 0,videoContent: ' URL for Recording Video '},
+   {videoNumber: 1,videoContent: ' URL for Recording Video '},
+   {videoNumber: 2,videoContent: ' URL for Recording Video '},
+   {videoNumber: 3,videoContent: ' URL for Recording Video '},
+   {videoNumber: 4,videoContent: ' URL for Recording Video '},
+   {videoNumber: 5,videoContent: ' URL for Recording Video '},
+   {videoNumber: 6,videoContent: ' URL for Recording Video '},
+   {videoNumber: 7,videoContent: ' URL for Recording Video '},
+   {videoNumber: 8,videoContent: ' URL for Recording Video '},
+   {videoNumber: 9,videoContent: ' URL for Recording Video '},
+   {videoNumber: 10,videoContent: ' URL for Recording Video '},
+   {videoNumber: 11,videoContent: ' URL for Recording Video '},
+   {videoNumber: 12,videoContent: ' URL for Recording Video '},
+   {videoNumber: 13,videoContent: ' URL for Recording Video '},
+   {videoNumber: 14,videoContent: ' URL for Recording Video '},
+   {videoNumber: 15,videoContent: ' URL for Recording Video '},
+   {videoNumber: 16,videoContent: ' URL for Recording Video '},
+   {videoNumber: 17,videoContent: ' URL for Recording Video '},
+   {videoNumber: 18,videoContent: ' URL for Recording Video '},
+   {videoNumber: 19,videoContent: ' URL for Recording Video '},
+   {videoNumber: 20,videoContent: ' URL for Recording Video '},
+   {videoNumber: 21,videoContent: ' URL for Recording Video '},
+   {videoNumber: 22,videoContent: ' URL for Recording Video '},
+   {videoNumber: 23,videoContent: ' URL for Recording Video '},
+   {videoNumber: 24,videoContent: ' URL for Recording Video '}
+  ]);
 
   // create 144 Lessons
   const lessonData = [];
@@ -111,7 +142,7 @@ db.once('open', async () => {
 
   // create Video
   const videoData = [];
-  for(let i = 0; i < 24; i +=1 ) {
+  for(let i = 25; i < 50; i +=1 ) {
     const videoNumber = `${i}`;
     const videoTitle = faker.commerce.productName();
     const videoContent = faker.image.imageUrl();
@@ -152,17 +183,22 @@ db.once('open', async () => {
    await User.updateOne({ _id: userId }, { $addToSet: { completedModules: completedModuleId } });
   }
 
-// Assign lessons to associated modules randomly:
+// Assign lessons to associated modules randomly && Assign recordings to modules:
   for (let i = 0; i < 23; i += 1) {
     const randomModuleIndex = Math.floor(Math.random() * createdModules.ops.length);
     const { _id: moduleId } = createdModules.ops[randomModuleIndex];// get module ID
+
     let lessonId=[];
     for (let i =1; i < 7; i += 1) {
       const randomLessonIndex = Math.floor(Math.random() * createdLessons.ops.length);
       lessonId = createdLessons.ops[randomLessonIndex];// get lesson IDs
     }
+    // adding recording to each module
+    let recordingId=[];
+    recordingId.push(recordingData.ops[i])
+   
    // add the lessons to Module.moduleSection
-   await Module.updateOne({ _id: moduleId }, { $addToSet: { moduleLesson: lessonId } });
+   await Module.updateMany({ _id: moduleId }, { $addToSet: { moduleLesson: lessonId, moduleVideo :recordingId}});
   }
 
 // Assign sections to associated lessons randomly: 
@@ -204,8 +240,6 @@ for (let i = 1; i < 5000; i += 1) {
  await Paragraph.updateOne({ _id: paragraphId }, { $addToSet: { paragraphVideo: videoId } });
 }
 
-// Assign videos to 
-
 // Assign paragraphs to associated sections randomly: 
 for (let i = 1; i < 865; i += 1) {
   const randomSectionIndex = Math.floor(Math.random() * createdSections.ops.length);
@@ -218,6 +252,7 @@ for (let i = 1; i < 865; i += 1) {
  // add the section to Section.sectionParagraph
  await Section.updateOne({ _id: sectionId }, { $addToSet: { sectionParagraph: paragraphId } });
 }  
+
 
 ////////////// End creating faker data
   console.log('all done!');
